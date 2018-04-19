@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Classes &amp; Libraries">
+      <UniqueIdentifier>{c4b5fe00-0c77-4b27-a221-c1fffcaa1e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes &amp; Libraries\SecureKeyExchange">
+      <UniqueIdentifier>{1edff36a-4356-4790-a509-d0885df8ba86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\%40Libraries\CSecureKeyExchange\CSecureKeyExchange.h">
+      <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\%40Libraries\CSecureKeyExchange\CSecureKeyExchange.cpp">
+      <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\%40Libraries\CSecureKeyExchange\CSecureKeyExchange_Primes.cpp">
+      <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
