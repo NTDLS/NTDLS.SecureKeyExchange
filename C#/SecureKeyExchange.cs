@@ -10,36 +10,36 @@ namespace SecureKeyExchange
     {
         #region Backend Variables.
 
-        private Random rand;
+        private readonly Random _rand;
 
-        private int minPrime = 1000;
-        private int maxPrime = 100000;
+        private readonly int _minPrime = 1000;
+        private readonly int _maxPrime = 100000;
 
-        private int minSecret = 100;
-        private int maxSecret = int.MaxValue;
+        private readonly int _minSecret = 100;
+        private readonly int _maxSecret = int.MaxValue;
 
-        private int sharedPrime;
-        private int sharedGenerator;
-        private int secretNumber;
+        private int _sharedPrime;
+        private int _sharedGenerator;
+        private int _secretNumber;
 
-        private int publicNumber;
-        private int sharedSecret;
-        private int foreignPublicNumber;
+        private int _publicNumber;
+        private int _sharedSecret;
+        private int _foreignPublicNumber;
 
-        private bool negoationComplete = false;
+        private bool _negoationComplete = false;
 
         #endregion
 
         public SecureKeyNegotiator()
         {
-            this.rand = new Random(Guid.NewGuid().GetHashCode());
+            this._rand = new Random(Guid.NewGuid().GetHashCode());
         }
 
         public bool NegoationComplete
         {
             get
             {
-                return negoationComplete;
+                return _negoationComplete;
             }
         }
 
@@ -47,12 +47,12 @@ namespace SecureKeyExchange
         {
             get
             {
-                if (negoationComplete == false)
+                if (_negoationComplete == false)
                 {
                     return 0;
                 }
 
-                return this.publicNumber;
+                return this._publicNumber;
             }
         }
 
@@ -60,7 +60,7 @@ namespace SecureKeyExchange
         {
             get
             {
-                if (negoationComplete == false)
+                if (_negoationComplete == false)
                 {
                     return null;
                 }
@@ -69,9 +69,9 @@ namespace SecureKeyExchange
 
                 byte[] bytes = new byte[12];
 
-                Buffer.BlockCopy(BitConverter.GetBytes(this.sharedPrime), 0, bytes, 0, 4);
-                Buffer.BlockCopy(BitConverter.GetBytes(this.publicNumber), 0, bytes, 4, 4);
-                Buffer.BlockCopy(BitConverter.GetBytes(this.sharedGenerator), 0, bytes, 8, 4);
+                Buffer.BlockCopy(BitConverter.GetBytes(this._sharedPrime), 0, bytes, 0, 4);
+                Buffer.BlockCopy(BitConverter.GetBytes(this._publicNumber), 0, bytes, 4, 4);
+                Buffer.BlockCopy(BitConverter.GetBytes(this._sharedGenerator), 0, bytes, 8, 4);
 
                 return sha.ComputeHash(bytes);
             }
@@ -81,7 +81,7 @@ namespace SecureKeyExchange
         {
             get
             {
-                if (negoationComplete == false)
+                if (_negoationComplete == false)
                 {
                     return null;
                 }
@@ -94,12 +94,12 @@ namespace SecureKeyExchange
         {
             get
             {
-                if (negoationComplete == false)
+                if (_negoationComplete == false)
                 {
                     return 0;
                 }
 
-                return this.sharedSecret;
+                return this._sharedSecret;
             }
         }
 
@@ -107,7 +107,7 @@ namespace SecureKeyExchange
         {
             get
             {
-                if (negoationComplete == false)
+                if (_negoationComplete == false)
                 {
                     return null;
                 }
@@ -116,9 +116,9 @@ namespace SecureKeyExchange
                 {
                     byte[] bytes = new byte[12];
 
-                    Buffer.BlockCopy(BitConverter.GetBytes(this.sharedPrime), 0, bytes, 0, 4);
-                    Buffer.BlockCopy(BitConverter.GetBytes(this.sharedSecret), 0, bytes, 4, 4);
-                    Buffer.BlockCopy(BitConverter.GetBytes(this.sharedGenerator), 0, bytes, 8, 4);
+                    Buffer.BlockCopy(BitConverter.GetBytes(this._sharedPrime), 0, bytes, 0, 4);
+                    Buffer.BlockCopy(BitConverter.GetBytes(this._sharedSecret), 0, bytes, 4, 4);
+                    Buffer.BlockCopy(BitConverter.GetBytes(this._sharedGenerator), 0, bytes, 8, 4);
 
                     return sha.ComputeHash(bytes);
                 }
@@ -129,7 +129,7 @@ namespace SecureKeyExchange
         {
             get
             {
-                if (negoationComplete == false)
+                if (_negoationComplete == false)
                 {
                     return null;
                 }
@@ -146,18 +146,18 @@ namespace SecureKeyExchange
 
             do
             {
-                int randomMax = rand.Next(minPrime, this.maxPrime);
-                primes = GetPrimes(minPrime, randomMax);
+                int randomMax = _rand.Next(_minPrime, this._maxPrime);
+                primes = GetPrimes(_minPrime, randomMax);
             } while (primes.Count < 100);
 
-            this.sharedPrime = GetRandomNumberFromList(primes);
-            this.sharedGenerator = rand.Next(minPrime, this.sharedPrime - 1);
-            this.secretNumber = rand.Next(minSecret, maxSecret);
-            this.publicNumber = (int)BigInteger.ModPow(this.sharedGenerator, this.secretNumber, this.sharedPrime);
+            this._sharedPrime = GetRandomNumberFromList(primes);
+            this._sharedGenerator = _rand.Next(_minPrime, this._sharedPrime - 1);
+            this._secretNumber = _rand.Next(_minSecret, _maxSecret);
+            this._publicNumber = (int)BigInteger.ModPow(this._sharedGenerator, this._secretNumber, this._sharedPrime);
 
-            Buffer.BlockCopy(BitConverter.GetBytes(this.sharedPrime), 0, token, 0, 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(this.sharedGenerator), 0, token, 4, 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(this.publicNumber), 0, token, 8, 4);
+            Buffer.BlockCopy(BitConverter.GetBytes(this._sharedPrime), 0, token, 0, 4);
+            Buffer.BlockCopy(BitConverter.GetBytes(this._sharedGenerator), 0, token, 4, 4);
+            Buffer.BlockCopy(BitConverter.GetBytes(this._publicNumber), 0, token, 8, 4);
 
             return token;
         }
@@ -167,28 +167,28 @@ namespace SecureKeyExchange
             byte[] buffer = new byte[4];
 
             Buffer.BlockCopy(token, 0, buffer, 0, 4);
-            this.sharedPrime = BitConverter.ToInt32(buffer, 0);
+            this._sharedPrime = BitConverter.ToInt32(buffer, 0);
 
             Buffer.BlockCopy(token, 4, buffer, 0, 4);
-            this.sharedGenerator = BitConverter.ToInt32(buffer, 0);
+            this._sharedGenerator = BitConverter.ToInt32(buffer, 0);
 
             Buffer.BlockCopy(token, 8, buffer, 0, 4);
-            this.foreignPublicNumber = BitConverter.ToInt32(buffer, 0);
+            this._foreignPublicNumber = BitConverter.ToInt32(buffer, 0);
 
-            this.secretNumber = rand.Next(minSecret, maxSecret);
-            this.publicNumber = (int)BigInteger.ModPow(this.sharedGenerator, this.secretNumber, this.sharedPrime);
-            this.sharedSecret = (int)BigInteger.ModPow(this.foreignPublicNumber, this.secretNumber, this.sharedPrime);
+            this._secretNumber = _rand.Next(_minSecret, _maxSecret);
+            this._publicNumber = (int)BigInteger.ModPow(this._sharedGenerator, this._secretNumber, this._sharedPrime);
+            this._sharedSecret = (int)BigInteger.ModPow(this._foreignPublicNumber, this._secretNumber, this._sharedPrime);
 
-            negoationComplete = true;
+            _negoationComplete = true;
 
-            return BitConverter.GetBytes(this.publicNumber);
+            return BitConverter.GetBytes(this._publicNumber);
         }
 
         public void ApplyNegotiationResponseToken(byte[] token)
         {
-            this.foreignPublicNumber = BitConverter.ToInt32(token, 0);
-            this.sharedSecret = (int)BigInteger.ModPow(this.foreignPublicNumber, this.secretNumber, this.sharedPrime);
-            negoationComplete = true;
+            this._foreignPublicNumber = BitConverter.ToInt32(token, 0);
+            this._sharedSecret = (int)BigInteger.ModPow(this._foreignPublicNumber, this._secretNumber, this._sharedPrime);
+            _negoationComplete = true;
         }
 
         #region Internal Generation.
@@ -253,7 +253,7 @@ namespace SecureKeyExchange
 
         private int GetRandomNumberFromList(List<int> numbers)
         {
-            return numbers[rand.Next(0, numbers.Count - 1)];
+            return numbers[_rand.Next(0, numbers.Count - 1)];
         }
 
         #endregion
