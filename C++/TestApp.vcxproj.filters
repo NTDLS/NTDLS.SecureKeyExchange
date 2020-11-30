@@ -13,19 +13,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\%40Libraries\CSecureKeyExchange\CSecureKeyExchange.h">
-      <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="TestApp.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\%40Libraries\CSecureKeyExchange\CSecureKeyExchange.cpp">
+    <ClCompile Include="CSecureKeyExchange.cpp">
       <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\%40Libraries\CSecureKeyExchange\CSecureKeyExchange_Primes.cpp">
+    <ClCompile Include="CSecureKeyExchange_Primes.cpp">
       <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CSecureKeyExchange.h">
+      <Filter>Classes &amp; Libraries\SecureKeyExchange</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
