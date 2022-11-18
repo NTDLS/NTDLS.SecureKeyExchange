@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Title>NTDLS.SecureKeyExchange</Title>
+    <Authors>NetworkDLS</Authors>
+    <Company>NetworkDLS</Company>
+    <Description>Easily generate a shared secret key between two machines or processes using a diffie-hellman algorithm. Generate a single 12byte key using UnitNegotiator or multiple at once with CompoundNegotiator for a no-limit large shared key.</Description>
+    <Copyright>Copyright © 2023 NetworkDLS</Copyright>
+    <PackageProjectUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+</Project>

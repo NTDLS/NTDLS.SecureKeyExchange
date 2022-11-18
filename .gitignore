@@ -1,3 +1,11 @@
 *.pdb
 C#/obj/
 C#/bin/
+
+C#/TestHarness/bin/
+
+C#/TestHarness/obj/
+
+C#/NTDLS.SecureKeyExchange/bin/
+
+C#/NTDLS.SecureKeyExchange/obj/
