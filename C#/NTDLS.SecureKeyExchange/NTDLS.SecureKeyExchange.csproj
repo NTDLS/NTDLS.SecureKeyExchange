@@ -10,21 +10,21 @@
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <PackageReleaseNotes>Migrated to net7.</PackageReleaseNotes>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>cryptography;secure;diffie-hellman;key-exchange-algorithms;random-key-generator;key-exchange;</PackageTags>
     <IncludeSymbols>False</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Version>$(VersionPrefix)</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
 </Project>
