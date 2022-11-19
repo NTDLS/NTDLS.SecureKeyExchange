@@ -159,10 +159,7 @@ namespace NTDLS.SecureKeyExchange
             {
                 if (IsNegoationComplete)
                 {
-                    using (SHA256Managed sha = new SHA256Managed())
-                    {
-                        return BitConverter.ToString(sha.ComputeHash(SharedSecret)).Replace("-", string.Empty);
-                    }
+                    return BitConverter.ToString(SHA512.HashData(SharedSecret)).Replace("-", string.Empty);
                 }
                 return null;
             }

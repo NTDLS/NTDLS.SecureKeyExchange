@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 
 namespace NTDLS.SecureKeyExchange
@@ -14,8 +15,6 @@ namespace NTDLS.SecureKeyExchange
         private const int TOKEN_SZ = 12;
 
         #region Private backend variables.
-
-        private readonly RNGCryptoServiceProvider _rngProvider = new RNGCryptoServiceProvider();
 
         private readonly int _minPrime = 1000;
         private readonly int _maxPrime = 1000000;
@@ -72,10 +71,7 @@ namespace NTDLS.SecureKeyExchange
             {
                 if (IsNegoationComplete)
                 {
-                    using (SHA256Managed sha = new SHA256Managed())
-                    {
-                        return BitConverter.ToString(sha.ComputeHash(SharedSecret)).Replace("-", string.Empty);
-                    }
+                    return BitConverter.ToString(SHA512.HashData(SharedSecret)).Replace("-", string.Empty);
                 }
                 return null;
             }
@@ -95,8 +91,6 @@ namespace NTDLS.SecureKeyExchange
 
             do
             {
-                byte[] random = new byte[4];
-                _rngProvider.GetBytes(random, 0, 4);
                 int randomMax = CryptoRand(_minPrime, _maxPrime);
                 primes = GetPrimes(_minPrime, randomMax);
             } while (primes.Count < 100);
@@ -193,9 +187,7 @@ namespace NTDLS.SecureKeyExchange
         /// <returns></returns>
         private int CryptoRand(int min, int max)
         {
-            var randomBytes = new byte[4];
-            _rngProvider.GetBytes(randomBytes, 0, 4);
-            int randomInt = BitConverter.ToInt32(randomBytes);
+            var randomInt = BitConverter.ToInt32(RandomNumberGenerator.GetBytes(4));
 
             if (randomInt < min)
             {
@@ -206,7 +198,6 @@ namespace NTDLS.SecureKeyExchange
                 return min + (randomInt - min) % (max - min);
             }
         }
-
 
         #endregion
     }
