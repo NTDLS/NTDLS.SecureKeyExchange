@@ -31,3 +31,6 @@ Console.WriteLine($"Key length: {localHost.KeyLength} bytes.");
 Console.WriteLine($" Local Shared Secret: {localHost.SharedSecretHash}");
 Console.WriteLine($"Remote Shared Secret: {remotePeer.SharedSecretHash}");
 ```
+
+## License
+[Apache-2.0](https://choosealicense.com/licenses/apache-2.0/)
