@@ -1,6 +1,8 @@
 # NTDLS.SecureKeyExchange
 Easily generate a shared diffie-hellman key in C++ or C#.
 
+Be sure to check out the NuGet pacakge: https://www.nuget.org/packages/NTDLS.SecureKeyExchange
+
 **Scenerio (use your imagination):**
 * localHost is a local service.
 * remotePeer is a remote peer.
