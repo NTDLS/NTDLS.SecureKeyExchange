@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Title>NTDLS.SecureKeyExchange</Title>
     <Authors>NetworkDLS</Authors>
     <Company>NetworkDLS</Company>
@@ -10,10 +10,12 @@
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <PackageReleaseNotes>License revision.</PackageReleaseNotes>
-    <AssemblyVersion>2.0.2</AssemblyVersion>
-    <FileVersion>2.0.2</FileVersion>
-    <VersionPrefix>2.0.2</VersionPrefix>
+    <PackageReleaseNotes>
+      Added net 6, 7 and documentation.
+    </PackageReleaseNotes>
+    <AssemblyVersion>2.1.0</AssemblyVersion>
+    <FileVersion>2.1.0</FileVersion>
+    <VersionPrefix>2.1.0</VersionPrefix>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>cryptography;secure;diffie-hellman;key-exchange-algorithms;random-key-generator;key-exchange;</PackageTags>
@@ -22,6 +24,7 @@
     <Version>$(VersionPrefix)</Version>
     <PackageIcon>Logo128x128.png</PackageIcon>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\README.md">

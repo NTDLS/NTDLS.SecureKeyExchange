@@ -4,6 +4,9 @@ using System.Security.Cryptography;
 
 namespace NTDLS.SecureKeyExchange
 {
+    /// <summary>
+    /// Used to negotiate multiple units to create a compound key.
+    /// </summary>
     public class CompoundNegotiator
     {
         #region Private backend variables.
@@ -17,6 +20,9 @@ namespace NTDLS.SecureKeyExchange
 
         #endregion
 
+        /// <summary>
+        /// The desired length of the compound key.
+        /// </summary>
         public int KeyLength { get; private set; }
 
         /// <summary>
@@ -45,9 +51,8 @@ namespace NTDLS.SecureKeyExchange
         /// <summary>
         /// Step #2-3, applies, at the peer, the public information provided by a call to GenerateNegotiationToken().
         /// </summary>
-        /// <param name="token"></param>
         /// <returns>Returns the public product from the application of shared data from remote peer. This is to be sent back to the peer.</returns>
-        /// <param name="token">Bytes passed to us from peer call to GenerateNegotiationToken()</param>
+        /// <param name="tokens">Bytes passed to us from peer call to GenerateNegotiationToken()</param>
         public byte[] ApplyNegotiationToken(byte[] tokens)
         {
             if (tokens.Length % TOKEN_SZ != 0)
@@ -77,7 +82,7 @@ namespace NTDLS.SecureKeyExchange
         /// <summary>
         /// Step #3-3, applies the public number sent from the remote peers call to ApplyNegotiationToken and applies it locally. This completes the key exchaange process.
         /// </summary>
-        /// <param name="token">Bytes passed to us from peer call to ApplyNegotiationToken()</param>
+        /// <param name="tokens">Bytes passed to us from peer call to ApplyNegotiationToken()</param>
         public void ApplyNegotiationResponseToken(byte[] tokens)
         {
             if (tokens.Length % REPLY_TOKEN_SZ != 0)
