@@ -13,6 +13,20 @@ namespace NTDLS.SecureKeyExchange
     {
         private const int TOKEN_SZ = 12;
 
+        private static readonly List<int> _primeCache = new List<int>();
+
+        public bool UsePrimeCache { get; private set; }
+
+        public UnitNegotiator(bool usePrimeCache)
+        {
+            UsePrimeCache = usePrimeCache;
+        }
+
+        public UnitNegotiator()
+        {
+            UsePrimeCache = true;
+        }
+
         #region Private backend variables.
 
         private readonly int _minPrime = 1000;
@@ -86,15 +100,35 @@ namespace NTDLS.SecureKeyExchange
 
             byte[] token = new byte[12];
 
-            List<int> primes;
-
-            do
+            if (UsePrimeCache)
             {
-                int randomMax = CryptoRand(_minPrime, _maxPrime);
-                primes = GetPrimes(_minPrime, randomMax);
-            } while (primes.Count < 100);
+                lock (_primeCache)
+                {
+                    if (_primeCache.Count < 100000)
+                    {
+                        do
+                        {
+                            int randomMax = CryptoRand(_minPrime, _maxPrime);
+                            _primeCache.AddRange(GetPrimes(randomMax / 2, randomMax));
+                        } while (_primeCache.Count < 1000);
+                    }
 
-            _sharedPrime = GetRandomNumberFromList(primes);
+                    _sharedPrime = GetRandomNumberFromList(_primeCache);
+                }
+            }
+            else
+            {
+                var primes = new List<int>();
+
+                do
+                {
+                    int randomMax = CryptoRand(_minPrime, _maxPrime);
+                    primes.AddRange(GetPrimes(randomMax / 2, randomMax));
+                } while (primes.Count < 1000);
+
+                _sharedPrime = GetRandomNumberFromList(primes);
+            }
+
             _sharedGenerator = CryptoRand(_minPrime, _sharedPrime - 1);
             _secretNumber = CryptoRand(_minSecret, _maxSecret);
             _publicNumber = (int)BigInteger.ModPow(_sharedGenerator, _secretNumber, _sharedPrime);

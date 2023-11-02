@@ -5,6 +5,29 @@ namespace TestHarness
 {
     internal class Program
     {
+        static void TimeUnitNegotiator()
+        {
+            DateTime startTime = DateTime.Now;
+
+            for (int i = 0; i < 100; i++)
+            {
+                var localHost = new UnitNegotiator();
+                byte[] negotiationToken = localHost.GenerateNegotiationToken();
+
+                var remotePeer = new UnitNegotiator();
+                byte[] negotiationReply = remotePeer.ApplyNegotiationToken(negotiationToken);
+
+                localHost.ApplyNegotiationResponseToken(negotiationReply);
+
+                if (remotePeer.SharedSecretHash != localHost.SharedSecretHash)
+                {
+                    throw new Exception("This should never happen.");
+                }
+            }
+
+            Console.WriteLine($"Elapsed time: {(DateTime.Now - startTime).TotalMilliseconds:n0}");
+        }
+
         static void TestUnitNegotiator()
         {
             var localHost = new UnitNegotiator();
@@ -59,6 +82,8 @@ namespace TestHarness
 
         static void Main(string[] args)
         {
+            TimeUnitNegotiator();
+            Console.WriteLine("");
             TestUnitNegotiator();
             Console.WriteLine("");
             TestCompoundNegotiator();
