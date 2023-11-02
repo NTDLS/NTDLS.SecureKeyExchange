@@ -14,7 +14,7 @@ namespace NTDLS.SecureKeyExchange
         private const int TOKEN_SZ = 12;
         private const int REPLY_TOKEN_SZ = 4;
 
-        private List<UnitNegotiator> _unitNegotiators = new List<UnitNegotiator>();
+        private readonly List<UnitNegotiator> _unitNegotiators = new();
         private byte[] _sharedBytes = null;
         private int _unitCount;
 

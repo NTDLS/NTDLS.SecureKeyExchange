@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Security.Cryptography;
 
@@ -11,8 +10,7 @@ namespace NTDLS.SecureKeyExchange
     public class UnitNegotiator
     {
         private const int TOKEN_SZ = 12;
-
-        private static readonly List<int> _primeCache = new();
+        private const int PRIME_BATCH_SZ = 10000;
 
         #region Private backend variables.
 
@@ -87,19 +85,12 @@ namespace NTDLS.SecureKeyExchange
 
             byte[] token = new byte[12];
 
-            lock (_primeCache)
-            {
-                if (_primeCache.Count < 1000000)
-                {
-                    int randomMax = CryptoRand(_minPrime, _maxPrime);
-                    _primeCache.AddRange(GeneratePrimesStartingFrom(randomMax / 2, 10000));
-                }
+            int primeFloor = Randomness.GetRandomNumber(_minPrime, _maxPrime);
+            var primes = PrimeGenerator.GeneratePrimesStartingFrom(primeFloor / 2, PRIME_BATCH_SZ);
+            _sharedPrime = Randomness.GetRandomNumberFromList(primes);
 
-                _sharedPrime = GetRandomNumberFromList(_primeCache);
-            }
-
-            _sharedGenerator = CryptoRand(_minPrime, _sharedPrime - 1);
-            _secretNumber = CryptoRand(_minSecret, _maxSecret);
+            _sharedGenerator = Randomness.GetRandomNumber(_minPrime, _sharedPrime - 1);
+            _secretNumber = Randomness.GetRandomNumber(_minSecret, _maxSecret);
             _publicNumber = (int)BigInteger.ModPow(_sharedGenerator, _secretNumber, _sharedPrime);
 
             Buffer.BlockCopy(BitConverter.GetBytes(_sharedPrime), 0, token, 0, 4);
@@ -129,7 +120,7 @@ namespace NTDLS.SecureKeyExchange
             Buffer.BlockCopy(token, 8, buffer, 0, 4);
             _foreignPublicNumber = BitConverter.ToInt32(buffer, 0);
 
-            _secretNumber = CryptoRand(_minSecret, _maxSecret);
+            _secretNumber = Randomness.GetRandomNumber(_minSecret, _maxSecret);
             _publicNumber = (int)BigInteger.ModPow(_sharedGenerator, _secretNumber, _sharedPrime);
             _sharedSecretNumber = (int)BigInteger.ModPow(_foreignPublicNumber, _secretNumber, _sharedPrime);
 
@@ -148,96 +139,5 @@ namespace NTDLS.SecureKeyExchange
             _sharedSecretNumber = (int)BigInteger.ModPow(_foreignPublicNumber, _secretNumber, _sharedPrime);
             IsNegoationComplete = true;
         }
-
-        #region Internal Generation.
-
-        /// <summary>
-        /// Used to generate a list of primes between two numbers. These clamps are supplied at random.
-        /// </summary>
-        private List<int> GeneratePrimesStartingFrom(int startPrime, int count)
-        {
-            var primes = new List<int>();
-            int currentPrime = startPrime;
-
-            while (primes.Count < count)
-            {
-                currentPrime = FindNextPrime(currentPrime + 1);
-                primes.Add(currentPrime);
-            }
-
-            int FindNextPrime(int start)
-            {
-                int number = start;
-
-                while (true)
-                {
-                    if (IsPrime(number))
-                    {
-                        return number;
-                    }
-                    number++;
-                }
-
-                bool IsPrime(int number)
-                {
-                    if (number <= 1)
-                    {
-                        return false;
-                    }
-                    if (number <= 3)
-                    {
-                        return true;
-                    }
-                    if (number % 2 == 0 || number % 3 == 0)
-                    {
-                        return false;
-                    }
-
-                    for (int i = 5; i * i <= number; i += 6)
-                    {
-                        if (number % i == 0 || number % (i + 2) == 0)
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-            }
-
-            return primes;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="numbers"></param>
-        /// <returns></returns>
-        private int GetRandomNumberFromList(List<int> numbers)
-        {
-            return numbers[CryptoRand(0, numbers.Count - 1)];
-        }
-
-        /// <summary>
-        /// Generates a clamped-by-wrapping random number.
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        private int CryptoRand(int min, int max)
-        {
-            var randomInt = BitConverter.ToInt32(RandomNumberGenerator.GetBytes(4));
-
-            if (randomInt < min)
-            {
-                return max - (min - randomInt) % (max - min);
-            }
-            else
-            {
-                return min + (randomInt - min) % (max - min);
-            }
-        }
-
-        #endregion
     }
 }
