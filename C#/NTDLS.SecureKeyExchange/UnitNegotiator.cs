@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 
@@ -13,24 +12,12 @@ namespace NTDLS.SecureKeyExchange
     {
         private const int TOKEN_SZ = 12;
 
-        private static readonly List<int> _primeCache = new List<int>();
-
-        public bool UsePrimeCache { get; private set; }
-
-        public UnitNegotiator(bool usePrimeCache)
-        {
-            UsePrimeCache = usePrimeCache;
-        }
-
-        public UnitNegotiator()
-        {
-            UsePrimeCache = true;
-        }
+        private static readonly List<int> _primeCache = new();
 
         #region Private backend variables.
 
-        private readonly int _minPrime = 1000;
-        private readonly int _maxPrime = 1000000;
+        private readonly int _minPrime = 2;
+        private readonly int _maxPrime = 10000019;
 
         private readonly int _minSecret = 100;
         private readonly int _maxSecret = int.MaxValue;
@@ -100,33 +87,15 @@ namespace NTDLS.SecureKeyExchange
 
             byte[] token = new byte[12];
 
-            if (UsePrimeCache)
+            lock (_primeCache)
             {
-                lock (_primeCache)
-                {
-                    if (_primeCache.Count < 100000)
-                    {
-                        do
-                        {
-                            int randomMax = CryptoRand(_minPrime, _maxPrime);
-                            _primeCache.AddRange(GetPrimes(randomMax / 2, randomMax));
-                        } while (_primeCache.Count < 1000);
-                    }
-
-                    _sharedPrime = GetRandomNumberFromList(_primeCache);
-                }
-            }
-            else
-            {
-                var primes = new List<int>();
-
-                do
+                if (_primeCache.Count < 1000000)
                 {
                     int randomMax = CryptoRand(_minPrime, _maxPrime);
-                    primes.AddRange(GetPrimes(randomMax / 2, randomMax));
-                } while (primes.Count < 1000);
+                    _primeCache.AddRange(GeneratePrimesStartingFrom(randomMax / 2, 10000));
+                }
 
-                _sharedPrime = GetRandomNumberFromList(primes);
+                _sharedPrime = GetRandomNumberFromList(_primeCache);
             }
 
             _sharedGenerator = CryptoRand(_minPrime, _sharedPrime - 1);
@@ -185,21 +154,58 @@ namespace NTDLS.SecureKeyExchange
         /// <summary>
         /// Used to generate a list of primes between two numbers. These clamps are supplied at random.
         /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        private List<int> GetPrimes(int min, int max)
+        private List<int> GeneratePrimesStartingFrom(int startPrime, int count)
         {
-            return Enumerable.Range(0, (int)Math.Floor(2.52 * Math.Sqrt(max) / Math.Log(max))).Aggregate(
-                    Enumerable.Range(2, max - 1).ToList(),
-                    (result, index) =>
+            var primes = new List<int>();
+            int currentPrime = startPrime;
+
+            while (primes.Count < count)
+            {
+                currentPrime = FindNextPrime(currentPrime + 1);
+                primes.Add(currentPrime);
+            }
+
+            int FindNextPrime(int start)
+            {
+                int number = start;
+
+                while (true)
+                {
+                    if (IsPrime(number))
                     {
-                        var bp = result[index];
-                        var sqr = bp * bp;
-                        result.RemoveAll(i => i >= sqr && i % bp == 0);
-                        return result;
+                        return number;
                     }
-                ).Where(o => o >= min).ToList();
+                    number++;
+                }
+
+                bool IsPrime(int number)
+                {
+                    if (number <= 1)
+                    {
+                        return false;
+                    }
+                    if (number <= 3)
+                    {
+                        return true;
+                    }
+                    if (number % 2 == 0 || number % 3 == 0)
+                    {
+                        return false;
+                    }
+
+                    for (int i = 5; i * i <= number; i += 6)
+                    {
+                        if (number % i == 0 || number % (i + 2) == 0)
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+
+            return primes;
         }
 
         /// <summary>

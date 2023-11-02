@@ -18,19 +18,7 @@ namespace NTDLS.SecureKeyExchange
         private byte[] _sharedBytes = null;
         private int _unitCount;
 
-        public bool UsePrimeCache { get; private set; }
-
         #endregion
-
-        public CompoundNegotiator(bool usePrimeCache)
-        {
-            UsePrimeCache = usePrimeCache;
-        }
-
-        public CompoundNegotiator()
-        {
-            UsePrimeCache = true;
-        }
 
         /// <summary>
         /// The desired length of the compound key.
@@ -51,7 +39,7 @@ namespace NTDLS.SecureKeyExchange
 
             for (int i = 0; i < _unitCount; i++)
             {
-                var unitNegotiator = new UnitNegotiator(UsePrimeCache);
+                var unitNegotiator = new UnitNegotiator();
                 var token = unitNegotiator.GenerateNegotiationToken();
                 token.CopyTo(tokens, i * TOKEN_SZ);
                 _unitNegotiators.Add(unitNegotiator);
@@ -78,7 +66,7 @@ namespace NTDLS.SecureKeyExchange
 
             for (int i = 0; i < _unitCount; i++)
             {
-                var unitNegotiator = new UnitNegotiator(UsePrimeCache);
+                var unitNegotiator = new UnitNegotiator();
 
                 var token = new byte[TOKEN_SZ];
                 Buffer.BlockCopy(tokens, i * TOKEN_SZ, token, 0, TOKEN_SZ);
