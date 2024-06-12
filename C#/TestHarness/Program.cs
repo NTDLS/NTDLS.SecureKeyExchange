@@ -50,7 +50,7 @@ namespace TestHarness
 
         static void TestCompoundNegotiator()
         {
-            //Scenerio (use your imagination):
+            //Scenario (use your imagination):
             //  localHost is a local service.
             //  remotePeer is a remote peer.
 

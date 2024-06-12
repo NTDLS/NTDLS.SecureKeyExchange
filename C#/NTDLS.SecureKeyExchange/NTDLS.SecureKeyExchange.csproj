@@ -1,29 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Nullable>enable</Nullable>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <Title>NTDLS.SecureKeyExchange</Title>
     <Authors>NetworkDLS</Authors>
     <Company>NetworkDLS</Company>
     <Description>Easily generate a shared secret key between two machines or processes using a diffie-hellman algorithm. Generate a single 12byte key using UnitNegotiator or multiple at once with CompoundNegotiator for a no-limit large shared key.</Description>
-    <Copyright>Copyright © 2023 NetworkDLS</Copyright>
+    <Copyright>Copyright © 2024 NetworkDLS</Copyright>
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      net8
+      Added meaningful exceptions.
+      Added nullable.
     </PackageReleaseNotes>
-    <AssemblyVersion>2.2.1</AssemblyVersion>
-    <FileVersion>2.2.1</FileVersion>
-    <VersionPrefix>2.2.1</VersionPrefix>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <AssemblyVersion>2.2.2</AssemblyVersion>
+    <FileVersion>2.2.2</FileVersion>
+    <VersionPrefix>2.2.2</VersionPrefix>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>cryptography;secure;diffie-hellman;key-exchange-algorithms;random-key-generator;key-exchange;</PackageTags>
-    <IncludeSymbols>False</IncludeSymbols>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>$(VersionPrefix)</Version>
     <PackageIcon>Logo128x128.png</PackageIcon>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>

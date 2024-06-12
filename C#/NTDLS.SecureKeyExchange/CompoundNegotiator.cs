@@ -15,7 +15,7 @@ namespace NTDLS.SecureKeyExchange
         private const int REPLY_TOKEN_SZ = 4;
 
         private readonly List<UnitNegotiator> _unitNegotiators = new();
-        private byte[] _sharedBytes = null;
+        private byte[]? _sharedBytes = null;
         private int _unitCount;
 
         #endregion
@@ -57,7 +57,7 @@ namespace NTDLS.SecureKeyExchange
         {
             if (tokens.Length % TOKEN_SZ != 0)
             {
-                throw new Exception("Tokens size is invalid.");
+                throw new ArgumentException($"Invalid token size. The token size must be a multiple of {TOKEN_SZ}", nameof(tokens));
             }
 
             _unitCount = tokens.Length / TOKEN_SZ;
@@ -87,7 +87,7 @@ namespace NTDLS.SecureKeyExchange
         {
             if (tokens.Length % REPLY_TOKEN_SZ != 0)
             {
-                throw new Exception("Tokens size is invalid.");
+                throw new ArgumentException($"Invalid token size. The token size must be a multiple of {REPLY_TOKEN_SZ}", nameof(tokens));
             }
 
             for (int i = 0; i < _unitCount; i++)
@@ -101,29 +101,29 @@ namespace NTDLS.SecureKeyExchange
         /// <summary>
         /// Is set to true when key exchange is completed.
         /// </summary>
-        private bool _isNegoationComplete;
+        private bool _isNegotiationComplete;
 
         /// <summary>
         /// Is set to true when key exchange is completed.
         /// </summary>
-        public bool IsNegoationComplete
+        public bool IsNegotiationComplete
         {
             get
             {
-                if (_isNegoationComplete == false)
+                if (_isNegotiationComplete == false)
                 {
-                    _isNegoationComplete = _unitNegotiators.Count > 0;
+                    _isNegotiationComplete = _unitNegotiators.Count > 0;
 
                     for (int i = 0; i < _unitCount; i++)
                     {
-                        if (_unitNegotiators[i].IsNegoationComplete == false)
+                        if (_unitNegotiators[i].IsNegotiationComplete == false)
                         {
                             return false;
                         }
                     }
                 }
 
-                return _isNegoationComplete;
+                return _isNegotiationComplete;
             }
         }
 
@@ -138,7 +138,7 @@ namespace NTDLS.SecureKeyExchange
                 {
                     return _sharedBytes;
                 }
-                else if (_sharedBytes == null && IsNegoationComplete)
+                else if (_sharedBytes == null && IsNegotiationComplete)
                 {
                     _sharedBytes = new byte[TOKEN_SZ * _unitCount];
 
@@ -150,7 +150,7 @@ namespace NTDLS.SecureKeyExchange
                 }
                 else
                 {
-                    return null;
+                    throw new Exception("Secure key negotiation is not complete.");
                 }
             }
         }
@@ -162,11 +162,11 @@ namespace NTDLS.SecureKeyExchange
         {
             get
             {
-                if (IsNegoationComplete)
+                if (IsNegotiationComplete)
                 {
                     return BitConverter.ToString(SHA512.HashData(SharedSecret)).Replace("-", string.Empty);
                 }
-                return null;
+                throw new Exception("Secure key negotiation is not complete.");
             }
         }
     }

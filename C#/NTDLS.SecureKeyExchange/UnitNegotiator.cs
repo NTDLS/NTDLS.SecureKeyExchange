@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace NTDLS.SecureKeyExchange
 {
     /// <summary>
-    /// Used to negoation a single share int32 using a Diffie-Helmlman algorithm.
+    /// Used to negotiation a single shared int32 using a Diffie-Hellman algorithm.
     /// </summary>
     public class UnitNegotiator
     {
@@ -33,7 +33,7 @@ namespace NTDLS.SecureKeyExchange
         /// <summary>
         /// Is set to true when key exchange is completed.
         /// </summary>
-        public bool IsNegoationComplete { get; private set; }
+        public bool IsNegotiationComplete { get; private set; }
 
         /// <summary>
         /// The length of the shared key.
@@ -47,9 +47,9 @@ namespace NTDLS.SecureKeyExchange
         {
             get
             {
-                if (IsNegoationComplete == false)
+                if (IsNegotiationComplete == false)
                 {
-                    return null;
+                    throw new Exception("Secure key negotiation is not complete.");
                 }
 
                 var token = new byte[12];
@@ -67,11 +67,11 @@ namespace NTDLS.SecureKeyExchange
         {
             get
             {
-                if (IsNegoationComplete)
+                if (IsNegotiationComplete)
                 {
                     return BitConverter.ToString(SHA512.HashData(SharedSecret)).Replace("-", string.Empty);
                 }
-                return null;
+                throw new Exception("Secure key negotiation is not complete.");
             }
         }
 
@@ -124,20 +124,21 @@ namespace NTDLS.SecureKeyExchange
             _publicNumber = (int)BigInteger.ModPow(_sharedGenerator, _secretNumber, _sharedPrime);
             _sharedSecretNumber = (int)BigInteger.ModPow(_foreignPublicNumber, _secretNumber, _sharedPrime);
 
-            IsNegoationComplete = true;
+            IsNegotiationComplete = true;
 
             return BitConverter.GetBytes(_publicNumber);
         }
 
         /// <summary>
-        /// Step #3-3, applies the public number sent from the remote peers call to ApplyNegotiationToken and applies it locally. This completes the key exchaange process.
+        /// Step #3-3, applies the public number sent from the remote peers call to ApplyNegotiationToken and applies it locally.
+        /// This completes the key exchange process.
         /// </summary>
         /// <param name="token">Bytes passed to us from peer call to ApplyNegotiationToken()</param>
         public void ApplyNegotiationResponseToken(byte[] token)
         {
             _foreignPublicNumber = BitConverter.ToInt32(token, 0);
             _sharedSecretNumber = (int)BigInteger.ModPow(_foreignPublicNumber, _secretNumber, _sharedPrime);
-            IsNegoationComplete = true;
+            IsNegotiationComplete = true;
         }
     }
 }
