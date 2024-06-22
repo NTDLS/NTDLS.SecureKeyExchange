@@ -9,7 +9,8 @@ namespace NTDLS.SecureKeyExchange
     /// </summary>
     public class UnitNegotiator
     {
-        private const int TOKEN_SZ = 12;
+        private const int UNIT_KEY_SIZE = 16;
+        private const int EXCHANGE_SIZE = 12;
         private const int PRIME_BATCH_SZ = 10000;
 
         #region Private backend variables.
@@ -52,12 +53,35 @@ namespace NTDLS.SecureKeyExchange
                     throw new Exception("Secure key negotiation is not complete.");
                 }
 
-                var token = new byte[12];
+                var token = new byte[16];
                 Buffer.BlockCopy(BitConverter.GetBytes(_sharedPrime), 0, token, 0, 4);
                 Buffer.BlockCopy(BitConverter.GetBytes(_sharedSecretNumber), 0, token, 4, 4);
                 Buffer.BlockCopy(BitConverter.GetBytes(_sharedGenerator), 0, token, 8, 4);
-                return token;
+                Buffer.BlockCopy(BitConverter.GetBytes(_sharedPrime ^ _sharedSecretNumber ^ _sharedGenerator), 0, token, 12, 4);
+
+                return KeyCipher(token, _sharedSecretNumber);
             }
+        }
+
+        private static byte[] KeyCipher(byte[] bytes, int key)
+        {
+            var scrambledBytes = new byte[bytes.Length];
+            var keyBytes = ExpandKey(bytes.Length, key);
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                scrambledBytes[i] = (byte)(bytes[i] ^ keyBytes[i]);
+            }
+
+            return scrambledBytes;
+        }
+
+        private static byte[] ExpandKey(int length, int key)
+        {
+            var keyBytes = new byte[length];
+            var random = new Random(key);
+            random.NextBytes(keyBytes);
+            return keyBytes;
         }
 
         /// <summary>
@@ -81,9 +105,9 @@ namespace NTDLS.SecureKeyExchange
         /// <returns>Returns byte array containing the shared prime, shared generator and shared number. This is to be sent to the peer.</returns>
         public byte[] GenerateNegotiationToken()
         {
-            KeyLength = TOKEN_SZ;
+            KeyLength = EXCHANGE_SIZE;
 
-            byte[] token = new byte[12];
+            var exchangeToken = new byte[EXCHANGE_SIZE];
 
             int primeFloor = Randomness.GetRandomNumber(_minPrime, _maxPrime);
             var primes = PrimeGenerator.GeneratePrimesStartingFrom(primeFloor / 2, PRIME_BATCH_SZ);
@@ -93,11 +117,11 @@ namespace NTDLS.SecureKeyExchange
             _secretNumber = Randomness.GetRandomNumber(_minSecret, _maxSecret);
             _publicNumber = (int)BigInteger.ModPow(_sharedGenerator, _secretNumber, _sharedPrime);
 
-            Buffer.BlockCopy(BitConverter.GetBytes(_sharedPrime), 0, token, 0, 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(_sharedGenerator), 0, token, 4, 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(_publicNumber), 0, token, 8, 4);
+            Buffer.BlockCopy(BitConverter.GetBytes(_sharedPrime), 0, exchangeToken, 0, 4);
+            Buffer.BlockCopy(BitConverter.GetBytes(_sharedGenerator), 0, exchangeToken, 4, 4);
+            Buffer.BlockCopy(BitConverter.GetBytes(_publicNumber), 0, exchangeToken, 8, 4);
 
-            return token;
+            return exchangeToken;
         }
 
         /// <summary>
@@ -107,9 +131,10 @@ namespace NTDLS.SecureKeyExchange
         /// <returns>Returns the public product from the application of shared data from remote peer. This is to be sent back to the peer.</returns>
         public byte[] ApplyNegotiationToken(byte[] token)
         {
-            KeyLength = TOKEN_SZ;
+            KeyLength = UNIT_KEY_SIZE;
+;
 
-            byte[] buffer = new byte[4];
+            var buffer = new byte[4];
 
             Buffer.BlockCopy(token, 0, buffer, 0, 4);
             _sharedPrime = BitConverter.ToInt32(buffer, 0);

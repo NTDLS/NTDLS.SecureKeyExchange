@@ -1,16 +1,16 @@
 # NTDLS.SecureKeyExchange
 
-📦 Be sure to check out the NuGet pacakge: https://www.nuget.org/packages/NTDLS.SecureKeyExchange
+📦 Be sure to check out the NuGet package: https://www.nuget.org/packages/NTDLS.SecureKeyExchange
 
-Easily generate a shared diffie-hellman key in C++ or C#.
+Easily generate a single or multi-round Diffie-Hellman key C#.
 
-**Scenerio (use your imagination):**
+**Scenario (use your imagination):**
 * localHost is a local service.
 * remotePeer is a remote peer.
 
 ```csharp
 //localHost starts the process with a call to GenerateNegotiationToken(),
-//  specifying the size of the key (which is actually n*12).
+//  specifying the size of the key (which is actually n*16).
 var localHost = new CompoundNegotiator();
 byte[] negotiationToken = localHost.GenerateNegotiationToken(8);
 

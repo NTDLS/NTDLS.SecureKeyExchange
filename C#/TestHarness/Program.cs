@@ -55,7 +55,7 @@ namespace TestHarness
             //  remotePeer is a remote peer.
 
             //localHost starts the process with a call to GenerateNegotiationToken(),
-            //  specifying the size of the key (which is actually n*12).
+            //  specifying the size of the key (which is actually n*16).
             var localHost = new CompoundNegotiator();
             byte[] negotiationToken = localHost.GenerateNegotiationToken(8);
 
@@ -88,6 +88,7 @@ namespace TestHarness
             Console.WriteLine("");
             TestCompoundNegotiator();
 
+            Console.WriteLine("Press [enter] to exit.");
             Console.ReadLine();
         }
     }

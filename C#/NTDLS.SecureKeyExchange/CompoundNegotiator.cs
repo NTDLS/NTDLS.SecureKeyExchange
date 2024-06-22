@@ -11,7 +11,8 @@ namespace NTDLS.SecureKeyExchange
     {
         #region Private backend variables.
 
-        private const int TOKEN_SZ = 12;
+        private const int UNIT_KEY_SIZE = 16;
+        private const int EXCHANGE_SIZE = 12;
         private const int REPLY_TOKEN_SZ = 4;
 
         private readonly List<UnitNegotiator> _unitNegotiators = new();
@@ -33,15 +34,15 @@ namespace NTDLS.SecureKeyExchange
         public byte[] GenerateNegotiationToken(int unitCount)
         {
             _unitCount = unitCount;
-            KeyLength = _unitCount * TOKEN_SZ;
+            KeyLength = _unitCount * UNIT_KEY_SIZE;
 
-            var tokens = new byte[_unitCount * TOKEN_SZ];
+            var tokens = new byte[_unitCount * EXCHANGE_SIZE];
 
             for (int i = 0; i < _unitCount; i++)
             {
                 var unitNegotiator = new UnitNegotiator();
                 var token = unitNegotiator.GenerateNegotiationToken();
-                token.CopyTo(tokens, i * TOKEN_SZ);
+                token.CopyTo(tokens, i * EXCHANGE_SIZE);
                 _unitNegotiators.Add(unitNegotiator);
             }
 
@@ -55,21 +56,21 @@ namespace NTDLS.SecureKeyExchange
         /// <param name="tokens">Bytes passed to us from peer call to GenerateNegotiationToken()</param>
         public byte[] ApplyNegotiationToken(byte[] tokens)
         {
-            if (tokens.Length % TOKEN_SZ != 0)
+            if (tokens.Length % EXCHANGE_SIZE != 0)
             {
-                throw new ArgumentException($"Invalid token size. The token size must be a multiple of {TOKEN_SZ}", nameof(tokens));
+                throw new ArgumentException($"Invalid token size. The token size must be a multiple of {EXCHANGE_SIZE}", nameof(tokens));
             }
 
-            _unitCount = tokens.Length / TOKEN_SZ;
-            KeyLength = _unitCount * TOKEN_SZ;
+            _unitCount = tokens.Length / EXCHANGE_SIZE;
+            KeyLength = _unitCount * UNIT_KEY_SIZE;
             var replyTokens = new byte[REPLY_TOKEN_SZ * _unitCount];
 
             for (int i = 0; i < _unitCount; i++)
             {
                 var unitNegotiator = new UnitNegotiator();
 
-                var token = new byte[TOKEN_SZ];
-                Buffer.BlockCopy(tokens, i * TOKEN_SZ, token, 0, TOKEN_SZ);
+                var token = new byte[EXCHANGE_SIZE];
+                Buffer.BlockCopy(tokens, i * EXCHANGE_SIZE, token, 0, EXCHANGE_SIZE);
                 var replyToken = unitNegotiator.ApplyNegotiationToken(token);
                 replyToken.CopyTo(replyTokens, i * REPLY_TOKEN_SZ);
 
@@ -140,11 +141,11 @@ namespace NTDLS.SecureKeyExchange
                 }
                 else if (_sharedBytes == null && IsNegotiationComplete)
                 {
-                    _sharedBytes = new byte[TOKEN_SZ * _unitCount];
+                    _sharedBytes = new byte[UNIT_KEY_SIZE * _unitCount];
 
                     for (int i = 0; i < _unitCount; i++)
                     {
-                        Buffer.BlockCopy(_unitNegotiators[i].SharedSecret, 0, _sharedBytes, i * TOKEN_SZ, TOKEN_SZ);
+                        Buffer.BlockCopy(_unitNegotiators[i].SharedSecret, 0, _sharedBytes, i * UNIT_KEY_SIZE, UNIT_KEY_SIZE);
                     }
                     return _sharedBytes;
                 }
