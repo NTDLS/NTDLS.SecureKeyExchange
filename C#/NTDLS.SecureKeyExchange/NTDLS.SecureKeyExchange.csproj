@@ -6,7 +6,7 @@
     <Title>NTDLS.SecureKeyExchange</Title>
     <Authors>NetworkDLS</Authors>
     <Company>NetworkDLS</Company>
-    <Description>Easily generate a shared secret key between two machines or processes using a diffie-hellman algorithm. Generate a single 12byte key using UnitNegotiator or multiple at once with CompoundNegotiator for a no-limit large shared key.</Description>
+    <Description>Easily generate a shared secret key between two machines or processes using a Diffie-Hellman algorithm. Generate a single 16byte key using UnitNegotiator or multi-round key using CompoundNegotiator for a no-limit large shared key.</Description>
     <Copyright>Copyright © 2024 NetworkDLS</Copyright>
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</RepositoryUrl>
@@ -15,9 +15,9 @@
       Added key expansion and changed resulting share secret to 16 bytes per unit.
       This breaks compatibility with previous versions, but is a highly recommended update.
     </PackageReleaseNotes>
-    <AssemblyVersion>3.0.0</AssemblyVersion>
-    <FileVersion>3.0.0</FileVersion>
-    <VersionPrefix>3.0.0</VersionPrefix>
+    <AssemblyVersion>3.0.1</AssemblyVersion>
+    <FileVersion>3.0.1</FileVersion>
+    <VersionPrefix>3.0.1</VersionPrefix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>cryptography;secure;diffie-hellman;key-exchange-algorithms;random-key-generator;key-exchange;</PackageTags>
