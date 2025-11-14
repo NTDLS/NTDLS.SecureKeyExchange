@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0;</TargetFrameworks>
     <Title>NTDLS.SecureKeyExchange</Title>
     <Authors>NetworkDLS</Authors>
     <Company>NetworkDLS</Company>
@@ -12,10 +12,9 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.SecureKeyExchange</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes>
-      Added key expansion and changed resulting share secret to 16 bytes per unit.
-      This breaks compatibility with previous versions, but is a highly recommended update.
+      Dependency updates and introduced .net 10 support.
     </PackageReleaseNotes>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>cryptography;secure;diffie-hellman;key-exchange-algorithms;random-key-generator;key-exchange;</PackageTags>
