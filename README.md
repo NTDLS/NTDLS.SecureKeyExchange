@@ -2,7 +2,7 @@
 
 📦 Be sure to check out the NuGet package: https://www.nuget.org/packages/NTDLS.SecureKeyExchange
 
-Easily generate a single or multi-round Diffie-Hellman key C#.
+Easily generate a single or multi-round Diffie-Hellman keys in C#.
 
 **Scenario (use your imagination):**
 * localHost is a local service.
